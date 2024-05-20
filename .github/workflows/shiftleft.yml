@@ -25,7 +25,7 @@ jobs:
     - name: preZero Static Analysis
       run: |
         ${GITHUB_WORKSPACE}/sl --version
-        QWIET_EXTERNAL_SECRETS=true ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
+        QWIET_EXTERNAL_SECRETS=true ${GITHUB_WORKSPACE}/sl analyze  --verbose --strict --wait \
           --tag app.group=multi-vuln-app --app multi-lang \
           --tag branch=${{ github.head_ref }} \
           --javasrc --container 18fgsa/s3-resource .
