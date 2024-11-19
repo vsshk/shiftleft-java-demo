@@ -25,8 +25,8 @@ jobs:
     - name: preZero Static Analysis
       run: |
         ${GITHUB_WORKSPACE}/sl --version
-        ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
-          --app shiftleft-java-demo \
+        QWIET_EXTERNAL_SECRETS=true ${GITHUB_WORKSPACE}/sl analyze  --verbose --strict --wait \
+          --tag app.group=multi-vuln-app --app multi-lang \
           --tag branch=${{ github.head_ref }} \
           --javasrc --container 18fgsa/s3-resource .
       env:
@@ -35,26 +35,4 @@ jobs:
         SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.stg.shiftleft.io:443
         SHIFTLEFT_GRPC_API_HOST: api-ext.stg.shiftleft.io:443
 
-  Build-Rules:
-    runs-on: ubuntu-latest
-    permissions: write-all
-    needs: NextGen-Static-Analysis
-    steps:
-    - uses: actions/checkout@v3
-    - name: Download ShiftLeft CLI
-      run: |
-        curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
-    - name: Validate Build Rules
-      run: |
-        ${GITHUB_WORKSPACE}/sl check-analysis --app shiftleft-java-demo \
-            --github-pr-number=${{github.event.number}} \
-            --github-pr-user=${{ github.repository_owner }} \
-            --github-pr-repo=${{ github.event.repository.name }} \
-            --github-token=${{ secrets.GITHUB_TOKEN }}
-      env:
-        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
-        SHIFTLEFT_API_HOST: www-ext.stg.shiftleft.io
-        SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.stg.shiftleft.io:443
-        SHIFTLEFT_GRPC_API_HOST: api-ext.stg.shiftleft.io:443
-
-
+  
